@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -5,33 +6,108 @@ import javax.swing.JTextField;
 
 
 public class Kakuro {
-
-	/**
-	 * @param args
-	 */
+	
+	public static int puzzleSize = 6;
+	
+	
 	public static void main(String[] args) {
-		//Kakuro Kak = new Kakuro(Integer.parseInt(args[0]));
-		int puzzleSize = 5;
+		
 		
 		if(args.length == 1){
 			puzzleSize = Integer.parseInt(args[0]);
 		} 
 		
-		Kakuro kaku = new Kakuro(puzzleSize);
+		String[][] kField = CreateNewFieldToSolve(puzzleSize);
+		printField(kField);
+//		System.out.println("The size of the square Kakuro is: " + kaku.blackwhiteBoxFinal[0].length);
+//		for(int ii = 0 ; ii < kaku.blackwhiteBoxFinal[0].length; ii++){
+//			for( int jj = 0; jj < kaku.blackwhiteBoxFinal[0].length; jj++){
+//				System.out.print(kaku.blackwhiteBoxFinal[ii][jj]);
+//				for(int kk = 0 ; kk < 6 - kaku.blackwhiteBoxFinal[ii][jj].length(); kk++){
+//					System.out.print(" ");
+//				}
+//				
+//			}
+//			System.out.println("");
+//		}
+		Combis combis = new Combis();
+		ArrayList<Integer> values = combis.getFirstValues(3, 9);
 		
-		System.out.println("The size of the square Kakuro is: " + kaku.blackwhiteBoxFinal[0].length);
-		System.out.println("Check input size: " + puzzleSize);
-		for(int ii = 0 ; ii < kaku.blackwhiteBoxFinal[0].length; ii++){
-			for( int jj = 0; jj < kaku.blackwhiteBoxFinal[0].length; jj++){
-				System.out.print(kaku.blackwhiteBoxFinal[ii][jj] + " ");
-			}
-			System.out.println("");
+		for( int d : values){
+			System.out.print(d + " ");
 		}
+		System.out.println("");
+		
+
+		
 		
 	}
 	
 	public Kakuro (int PuzzleSize){
 		GenerateNewPuzzle(PuzzleSize);
+		
+	}
+	
+//	public static String[][] firstStep(String[][] kField){
+//		for(int i = 0 ; i < kField[0].length ; i++){
+//			for(int j = 0 ; j < kField[0].length ; j++){
+//				if(kField[i][j] == "?"){
+//					new GroepEntry(i,j, )
+//				}
+//			}
+//		}
+//		
+//		return kField;
+//	}
+	
+	public static String[][] CreateNewFieldToSolve(int pSize){
+		Kakuro kaku = new Kakuro(pSize);
+		String[][] kField = new String[pSize][pSize];
+		System.out.println("The size of the square Kakuro is: " + kaku.blackwhiteBoxFinal[0].length);
+		for(int ii = 0 ; ii < kaku.blackwhiteBoxFinal[0].length; ii++){
+		for( int jj = 0; jj < kaku.blackwhiteBoxFinal[0].length; jj++){
+				if(isInteger(kaku.blackwhiteBoxFinal[ii][jj])){
+					kField[ii][jj] = "?";
+				} else { 
+					kField[ii][jj] = kaku.blackwhiteBoxFinal[ii][jj];
+				}
+			}
+		}
+		return kField;
+	}
+	
+	public static void printField(String[][] kField){
+		for(int ii = 0 ; ii < kField[0].length; ii++){
+			for( int jj = 0; jj < kField[0].length; jj++){
+				String pr = kField[ii][jj];
+					if(!isInteger(pr)){
+						System.out.print(pr);
+					} else { 
+						System.out.print("?");
+					}
+				for(int kk = 0 ; kk < 6 - kField[ii][jj].length(); kk++){
+					System.out.print(" ");
+				}
+			}
+			System.out.println("");
+		}
+	}
+	
+
+	
+	
+	//The class isInteger is from:
+	//http://stackoverflow.com/questions/5439529/determine-if-a-string-is-an-integer-in-java
+	//http://stackoverflow.com/users/330057/corsika
+	
+	public static boolean isInteger(String s) {
+	    try { 
+	        Integer.parseInt(s); 
+	    } catch(NumberFormatException e) { 
+	        return false; 
+	    }
+	    // only got here if we didn't return false
+	    return true;
 	}
 	
 	public void GenerateNewPuzzle(int pSize)
@@ -345,9 +421,7 @@ public class Kakuro {
 		}
 	}
 	
-	/**
-	 * CheckSolution - Verify whether Puzzle is Unique or NOT
-	 */
+
 	 
 	public boolean CheckUnique(int rand, int array[], int size, int a, int b)
 	{
