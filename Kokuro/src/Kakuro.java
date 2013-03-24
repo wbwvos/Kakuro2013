@@ -8,7 +8,7 @@ import javax.swing.JTextField;
 public class Kakuro {
 	
 	public static int puzzleSize = 6;
-	
+	static Combis combis = new Combis();
 	
 	public static void main(String[] args) {
 		
@@ -19,6 +19,7 @@ public class Kakuro {
 		
 		String[][] kField = CreateNewFieldToSolve(puzzleSize);
 		printField(kField);
+		DecomposeField(kField);
 //		System.out.println("The size of the square Kakuro is: " + kaku.blackwhiteBoxFinal[0].length);
 //		for(int ii = 0 ; ii < kaku.blackwhiteBoxFinal[0].length; ii++){
 //			for( int jj = 0; jj < kaku.blackwhiteBoxFinal[0].length; jj++){
@@ -30,15 +31,13 @@ public class Kakuro {
 //			}
 //			System.out.println("");
 //		}
-		Combis combis = new Combis();
-		ArrayList<Integer> values = combis.getFirstValues(3, 9);
 		
-		for( int d : values){
-			System.out.print(d + " ");
-		}
-		System.out.println("");
-		
-
+//		ArrayList<Integer> values = combis.getFirstValues(3, 9);
+//		
+//		for( int d : values){
+//			System.out.print(d + " ");
+//		}
+//		System.out.println("");
 		
 		
 	}
@@ -60,6 +59,92 @@ public class Kakuro {
 //		return kField;
 //	}
 	
+	public static void DecomposeField(String[][] kField){
+		for(int ii = 0 ; ii < kField[0].length; ii++){
+			for( int jj = 0; jj < kField[0].length; jj++){
+				if(kField[ii][jj].indexOf("\\") == 0){
+					int[] spotsumH = getHSpots(kField, ii, jj);
+					ArrayList<Integer> coms = combis.getFirstValues(spotsumH[0], spotsumH[1]);
+					GroepEntry a = new GroepEntry(ii, jj, 0,0,spotsumH[0],spotsumH[1], coms );
+					System.out.print("H:");
+					System.out.print(a.numbers);
+					System.out.println("");
+					}else{
+				
+				if(kField[ii][jj].indexOf("\\") == kField[ii][jj].length() - 1){
+					int[] spotsumV = getVSpots(kField, ii, jj);
+					ArrayList<Integer> coms = combis.getFirstValues(spotsumV[0], spotsumV[1]);
+					GroepEntry a = new GroepEntry(ii, jj,spotsumV[0],spotsumV[1], 0, 0, coms );
+					System.out.print("V: ");
+					System.out.print(a.numbers);
+					System.out.println("");
+				}else{
+//			System.out.print("length: " + (kField[ii][jj].split("\\\\")).length + " ");
+				if((kField[ii][jj].split("\\\\")).length == 2){
+					int[] spotsumVH = getVHSpots(kField, ii,jj);
+				}
+				}
+				}
+			}
+		}
+	}
+	
+	public static int[] getVHSpots(String[][] kField, int ii, int jj){
+		String[] temp = kField[ii][jj].split("\\\\");
+		//System.out.print(temp[0]);
+		//System.out.print(temp[1]);
+		int hsum = Integer.parseInt(temp[1]);
+		int vsum = Integer.parseInt(temp[0]);
+//		System.out.print("vsum " + vsum + " ");
+//		System.out.print("hsum " + hsum + " ");
+		int hspots = 0;
+		int hlcount = 1;
+		while(jj+hlcount < kField[0].length && kField[ii][jj+hlcount].equals("?")){
+			hspots++;
+			hlcount++;
+		}
+		int vspots = 0;
+		int vlcount = 1;
+		while(ii+vlcount < kField[0].length && kField[ii+vlcount][jj].equals("?")){
+			vspots++;
+			vlcount++;
+		}
+//		System.out.print("vspots " +  vspots + " ");
+//		System.out.print("hspots " +  hspots + " ");
+		int[] values = {hspots, hsum, vspots, vsum};
+		return values;
+	}
+	
+	public static int[] getHSpots(String[][] kField, int ii, int jj){
+		String temp = kField[ii][jj];
+		int hsum = Integer.parseInt(temp.replace("\\", ""));
+		//System.out.print(hsum + " ");
+		int hspots = 0;
+		int hlcount = 1;
+		while(jj+hlcount < kField[0].length && kField[ii][jj+hlcount].equals("?")){
+			hspots++;
+			hlcount++;
+		}
+		int[] values = {hspots, hsum};
+		return values;
+	}
+	
+	public static int[] getVSpots(String[][] kField, int ii, int jj){
+		String temp = kField[ii][jj];
+		int vsum = Integer.parseInt(temp.replace("\\", ""));
+		//System.out.print(vsum + " ");
+		int vspots = 0;
+		int vlcount = 1;
+		while(ii+vlcount < kField[0].length && kField[ii+vlcount][jj].equals("?")){
+			vspots++;
+			vlcount++;
+		}
+		int[]values = {vspots, vsum};
+		return values;
+	}
+
+	
+	
 	public static String[][] CreateNewFieldToSolve(int pSize){
 		Kakuro kaku = new Kakuro(pSize);
 		String[][] kField = new String[pSize][pSize];
@@ -80,11 +165,7 @@ public class Kakuro {
 		for(int ii = 0 ; ii < kField[0].length; ii++){
 			for( int jj = 0; jj < kField[0].length; jj++){
 				String pr = kField[ii][jj];
-					if(!isInteger(pr)){
-						System.out.print(pr);
-					} else { 
-						System.out.print("?");
-					}
+				System.out.print(pr);
 				for(int kk = 0 ; kk < 6 - kField[ii][jj].length(); kk++){
 					System.out.print(" ");
 				}
